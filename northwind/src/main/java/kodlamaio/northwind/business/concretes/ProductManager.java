@@ -23,7 +23,7 @@ import kodlamaio.northwind.entities.concretes.Product;
 public class ProductManager implements ProductService {
 
 	private ProductDao productDao;
-
+  
 	@Autowired
 	public ProductManager(ProductDao productDao) {
 		super();
