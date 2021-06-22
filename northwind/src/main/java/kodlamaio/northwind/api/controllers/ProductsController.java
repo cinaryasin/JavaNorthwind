@@ -1,27 +1,43 @@
 package kodlamaio.northwind.api.controllers;
 
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import kodlamaio.northwind.business.abstracts.ProductService;
 import kodlamaio.northwind.core.utilities.results.DataResult;
+import kodlamaio.northwind.core.utilities.results.ErrorDataResult;
 import kodlamaio.northwind.core.utilities.results.Result;
 import kodlamaio.northwind.entities.concretes.Product;
 import kodlamaio.northwind.entities.dtos.ProductWithCategoryDto;
 
+
 @RestController
 @RequestMapping("/api/products")
+@CrossOrigin
 public class ProductsController {
 
 	private ProductService productService;
 
+	
 	@Autowired
 	public ProductsController(ProductService productService) {
 		super();
@@ -38,8 +54,9 @@ public class ProductsController {
 		return this.productService.getProductWithCategoryDetails();
 	}
 
+	
 	@PostMapping("/add")
-	public Result add(@RequestBody Product product) {
+	public Result add(@RequestBody @Valid Product product) {
 		return this.productService.add(product);
 	}
 
@@ -76,5 +93,23 @@ public class ProductsController {
 	public DataResult<List<Product>> getAllSorted() {
 		return this.productService.getAllSorted();
 	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ErrorDataResult<Object> handleValidationException(MethodArgumentNotValidException exceptions) {
+		Map<String, String> validationErrors = new HashMap<String, String>();
+		for (FieldError fieldError : exceptions.getBindingResult().getFieldErrors()) {
+			validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
+		}
+
+		ErrorDataResult<Object> errors = new ErrorDataResult<Object>(validationErrors, "Doğrulama Hataları");
+
+		return errors;
+
+	}
+	
+	
+	
+	
 
 }

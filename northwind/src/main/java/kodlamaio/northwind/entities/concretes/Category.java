@@ -2,7 +2,6 @@ package kodlamaio.northwind.entities.concretes;
 
 import java.util.List;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,18 +17,18 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="categories")
+@Table(name = "categories")
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","products"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "products" })
 public class Category {
 
 	@Id
-	@Column(name="category_id")
+	@Column(name = "category_id")
 	private int categoryId;
-	
-	@Column(name="category_name")
+
+	@Column(name = "category_name")
 	private String categoryName;
-	
+
 	@OneToMany(mappedBy = "category")
 	private List<Product> products;
 }
